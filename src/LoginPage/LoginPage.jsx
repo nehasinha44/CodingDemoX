@@ -9,7 +9,6 @@ class LoginPage extends React.Component {
         super(props);
         console.log(localStorage.getItem('usre'));
         if (localStorage.getItem('usre') != null ) {
-          //  console.log("hera");
             this.props.history.push("/register");
         }
         else

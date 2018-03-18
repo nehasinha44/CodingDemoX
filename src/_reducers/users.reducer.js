@@ -2,18 +2,20 @@ import { userConstants } from '../_constants';
 //console.log("reducer");
 
 export function users(state = {}, action) {
- // console.log(action.type);
+ console.log(action.payload);
   switch (action.type) {
    
        case "listplanets":
        return {
        // if (true) {};
-        registration : action.payload
+
+        registration : action.payload.userinfo,
+        authentication:{'nexturl':action.payload.nexturl,'detail':""}
           };
         case "palnetsdel":
         return{
-
-          authentication:action.payload
+          ...state,
+          authentication:{'detail':action.payload,nexturl:""}
         }
 
     
