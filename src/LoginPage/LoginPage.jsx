@@ -7,22 +7,18 @@ import { userActions } from '../_actions';
 class LoginPage extends React.Component {
     constructor(props) {
         super(props);
-        console.log(localStorage.getItem('usre'));
         if (localStorage.getItem('usre') != null ) {
             this.props.history.push("/register");
         }
         else
         {
             this.props.history.push("/login");
-        }
-        
-            this.state = {
+        }        
+        this.state = {
             username: '',
             password: '',
             submitted: false
         }
-
-       
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);

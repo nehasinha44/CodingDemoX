@@ -5,9 +5,12 @@ export const userService = {
     login,
     logout,
     search,
+   showPaginationData,
+    cancelRequest
     
 };
-
+var CancelToken=null;
+var source = null;
 function login(username,password) {
     const requestOptions = {
         method: 'GET',
@@ -17,66 +20,55 @@ function login(username,password) {
     const url = 'https://swapi.co/api/people/?search='+usernameold;
     return fetch(url, requestOptions)
         .then(handleResponse);
-
-            
 }
-
 function logout() {
-    //console.log("remove user from local storage to log user out");
    localStorage.removeItem('usre');
+   localStorage.removeItem('SearchCount');
    location.reload();
 }
 function search(user) {
-    const requestOptions = {
-        method: 'GET',
-        headers: authHeader()
-    };
-
-    const url ='https://swapi.co/api/planets/?search='+user;
-    return fetch(url, requestOptions)
-        .then(handleResponse);
+    if(source){ source.cancel('Operation canceled by the user.'); }
+     CancelToken = axios.CancelToken;
+     source = CancelToken.source();
+        const requestOptions = {
+                method: 'GET',
+                headers: authHeader(),
+                cancelToken: source.token
+            };       
+       return axios.get('https://swapi.co/api/planets/?search='+user,requestOptions).then(function (response) {
+            return response.data;
+          }).catch(function(thrown) {
+                      if (axios.isCancel(thrown)) {
+                        console.log('Request canceled', thrown.message);
+                      } else {
+                        // handle error
+                      }
+                    });
 }
+function cancelRequest(){
+     if(source){ source.cancel('Operation canceled by the user.'); }
+}
+function showPaginationData(url){
+    if(source){ source.cancel('Operation canceled by the user.'); }
+     CancelToken = axios.CancelToken;
+     source = CancelToken.source();
 
-// function getAll() {
-//     alert(getall);
-//     const requestOptions = {
-//         method: 'GET',
-//         headers: authHeader()
-//     };
-
-//     return fetch('/users', requestOptions).then(handleResponse);
-// }
-
-// function getById(id) {
-//     const requestOptions = {
-//         method: 'GET',
-//         headers: authHeader()
-//     };
-
-//     return fetch('/users/' + _id, requestOptions).then(handleResponse);
-// }
-
-
-
-// function update(user) {
-//     const requestOptions = {
-//         method: 'PUT',
-//         headers: { ...authHeader(), 'Content-Type': 'application/json' },
-//         body: JSON.stringify(user)
-//     };
-
-//     return fetch('/users/' + user.id, requestOptions).then(handleResponse);;
-// }
-
-// prefixed function name with underscore because delete is a reserved word in javascript
-// function _delete(id) {
-//     const requestOptions = {
-//         method: 'DELETE',
-//         headers: authHeader()
-//     };
-
-//     return fetch('/users/' + id, requestOptions).then(handleResponse);;
-// }
+        const requestOptions = {
+                method: 'GET',
+                headers: authHeader(),
+                cancelToken: source.token
+            };
+       
+       return axios.get(url,requestOptions).then(function (response) {
+          return response.data;
+        }).catch(function(thrown) {
+                    if (axios.isCancel(thrown)) {
+                      console.log('Request canceled', thrown.message);
+                    } else {
+                      // handle error
+                    }
+                  });
+}
 
 function handleResponse(response) {
     //console.log(response);
